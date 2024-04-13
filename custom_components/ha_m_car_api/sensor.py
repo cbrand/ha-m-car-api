@@ -134,7 +134,7 @@ class CarApiSensor(Entity):
                     car_key += "_gas"
                     self.attrs[car_key] += 1
 
-            self.attrs["vehicles"] = [vehicle.model_dump() for vehicle in vehicles]
+            self.attrs["vehicles"] = [vehicle.dict() for vehicle in vehicles]
 
         except (ValueError, requests.ConnectionError):
             self._available = False
