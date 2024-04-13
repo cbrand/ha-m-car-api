@@ -34,10 +34,15 @@ async def async_setup_entry(
     _LOGGER.debug("Sensor async_setup_entry")
     if entry.options:
         config.update(entry.options)
-    m_api = MApi(config.get(CONF_DEVICE_KEY, str(uuid4())))
+    _LOGGER.info("Config: %s", config)
+    device_key = config.get(CONF_DEVICE_KEY, None)
+    if device_key is None:
+        _LOGGER.error("Could not get device key from configuration for M Car API initialization")
+    else:
+        m_api = MApi(device_key)
 
-    sensor = CarApiSensor(hass, m_api, config)
-    async_add_entities([sensor], update_before_add=True)
+        sensor = CarApiSensor(hass, m_api, config)
+        async_add_entities([sensor], update_before_add=True)
 
 
 class CarApiSensor(Entity):
