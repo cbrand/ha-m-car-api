@@ -6,6 +6,6 @@
   "domain": "ha_m_car_api",
   "iot_class": "cloud_polling",
   "name": "M Car API",
-  "requirements": ["m-car-api>=1.0.2"],
-  "version": "1.0.0"
+  "requirements": ["m_car_api>=1.0.2"],
+  "version": "1.0.1"
 }
