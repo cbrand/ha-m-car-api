@@ -2,6 +2,7 @@ from functools import partial
 import logging
 from datetime import timedelta
 from typing import Any, Callable, Dict, Optional
+from uuid import uuid4
 
 import requests
 from homeassistant.core import HomeAssistant
@@ -33,7 +34,7 @@ async def async_setup_entry(
     _LOGGER.debug("Sensor async_setup_entry")
     if entry.options:
         config.update(entry.options)
-    m_api = MApi(config[CONF_DEVICE_KEY])
+    m_api = MApi(config.get(CONF_DEVICE_KEY, str(uuid4())))
 
     sensor = CarApiSensor(hass, m_api, config)
     async_add_entities([sensor], update_before_add=True)
