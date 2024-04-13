@@ -7,6 +7,7 @@ import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.data_entry_flow import FlowResult
+from homeassistant.helpers.selector import SelectSelector, SelectSelectorConfig, SelectSelectorMode
 
 from custom_components.ha_m_car_api.const import (
     CONF_DEVICE_KEY,
@@ -88,8 +89,10 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
             step_id="user",
             data_schema=vol.Schema(
                 {
-                    vol.Required(CONF_LOCATION, default=__get_option(CONF_LOCATION)): vol.In(
-                        _get_valid_locations(self.hass)
+                    vol.Required(CONF_LOCATION, default=__get_option(CONF_LOCATION)): SelectSelector(
+                        SelectSelectorConfig(
+                            options=await _get_valid_locations(self.hass), mode=SelectSelectorMode.DROPDOWN
+                        ),
                     ),
                     vol.Required(
                         CONF_DISTANCE_METERS, default=__get_option(CONF_DISTANCE_METERS, DEFAULT_CONF_DISTANCE_METERS)
@@ -138,7 +141,11 @@ class MCarAPIConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):  # type: igno
             step_id="user",
             data_schema=vol.Schema(
                 {
-                    vol.Required(CONF_LOCATION): vol.In(_get_valid_locations(self.hass)),
+                    vol.Required(CONF_LOCATION): SelectSelector(
+                        SelectSelectorConfig(
+                            options=await _get_valid_locations(self.hass), mode=SelectSelectorMode.DROPDOWN
+                        ),
+                    ),
                     vol.Required(CONF_DISTANCE_METERS, default=DEFAULT_CONF_DISTANCE_METERS): cv.positive_int,
                     vol.Optional(CONF_DEVICE_KEY): cv.string,
                     vol.Required(CONF_SCAN_INTERVAL, default=DEFAULT_CONF_SCAN_INTERVAL): cv.positive_int,
