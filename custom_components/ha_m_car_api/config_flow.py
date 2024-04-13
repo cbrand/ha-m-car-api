@@ -25,6 +25,12 @@ M_CAR_API_DATA_SCHEMA = vol.Schema({vol.Required("")})
 _LOGGER = logging.getLogger(__name__)
 
 
+async def validate_device_key(device_key: str | None) -> str:
+    if not device_key:
+        device_key = str(uuid4())
+    return device_key
+
+
 async def _validate_location(hass: HomeAssistant, location: str) -> str:
     if not any(location.startswith(f"{entity_type}.") for entity_type in VALID_ENTITY_TYPES):
         raise vol.Invalid("location_invalid")
@@ -69,6 +75,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
 
         errors = {}
         if user_input is not None:
+            user_input[CONF_DEVICE_KEY] = await validate_device_key(__get_option(CONF_DEVICE_KEY, None))
             user_input[CONF_SCAN_INTERVAL] = __get_option(CONF_SCAN_INTERVAL, DEFAULT_CONF_SCAN_INTERVAL)
 
             location_entry = ""
@@ -114,9 +121,7 @@ class MCarAPIConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):  # type: igno
     async def async_step_user(self, user_input: Optional[Dict[str, Any]] = None) -> FlowResult:
         errors = {}
         if user_input is not None:
-            device_key = user_input.get(CONF_DEVICE_KEY, None)
-            if not device_key:
-                device_key = str(uuid4())
+            user_input[CONF_DEVICE_KEY] = await validate_device_key(user_input.get(CONF_DEVICE_KEY, None))
             location = user_input.get(CONF_LOCATION, "")
             unique_id = ""
             location_entry = ""
