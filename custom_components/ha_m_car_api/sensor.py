@@ -97,7 +97,7 @@ class CarApiSensor(Entity):
                     self._api.vehicles_meters_around_location,
                     lat=latitude,
                     lon=longitude,
-                    distance_meters=self._distance_meters,
+                    meters=self._distance_meters,
                 )
             )
 
