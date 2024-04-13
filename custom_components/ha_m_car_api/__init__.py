@@ -3,7 +3,7 @@ from typing import Any
 
 from homeassistant import config_entries, core
 from datetime import timedelta
-from custom_components.ha_m_car_api.const import DOMAIN
+from custom_components.ha_m_car_api.config_flow import DOMAIN
 
 CONF_SCAN_INTERVAL = 2
 SCAN_INTERVAL = timedelta(minutes=2)
