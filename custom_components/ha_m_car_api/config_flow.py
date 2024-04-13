@@ -96,7 +96,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
             step_id="user",
             data_schema=vol.Schema(
                 {
-                    vol.Required(CONF_LOCATION, default=__get_option(CONF_LOCATION)): SelectSelector(
+                    vol.Required(CONF_LOCATION, default=__get_option(CONF_LOCATION, None)): SelectSelector(
                         SelectSelectorConfig(
                             options=await _get_valid_locations(self.hass), mode=SelectSelectorMode.DROPDOWN
                         ),
@@ -104,7 +104,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                     vol.Required(
                         CONF_DISTANCE_METERS, default=__get_option(CONF_DISTANCE_METERS, DEFAULT_CONF_DISTANCE_METERS)
                     ): cv.positive_int,
-                    vol.Required(CONF_DEVICE_KEY, default=__get_option(CONF_DEVICE_KEY)): cv.string,
+                    vol.Required(CONF_DEVICE_KEY, default=__get_option(CONF_DEVICE_KEY, None)): cv.string,
                     vol.Required(
                         CONF_SCAN_INTERVAL, default=__get_option(CONF_SCAN_INTERVAL, DEFAULT_CONF_SCAN_INTERVAL)
                     ): cv.positive_int,
