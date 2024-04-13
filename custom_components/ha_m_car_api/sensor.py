@@ -53,7 +53,7 @@ class CarApiSensor(Entity):
         self._location = data[CONF_LOCATION]
         self._distance_meters = data.get(CONF_DISTANCE_METERS, DEFAULT_CONF_DISTANCE_METERS)
         self._scan_interval = data.get(CONF_SCAN_INTERVAL, DEFAULT_CONF_SCAN_INTERVAL)
-        self._name = data.get("name", f"Car API Sensor {self._location}")
+        self._name = data.get("name", f"Miles cars close to {self._location}")
         self.attrs: dict[str, Any] = {
             "location": self._location,
             "distance_meters": self._distance_meters,
