@@ -80,7 +80,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
 
             location_entry = ""
             try:
-                location = await _validate_location(self.hass, location)
+                location = await _validate_location(self.hass, location_entry)
                 items = location.split(".", 1)
                 location_entry = items[-1]
             except vol.Invalid as error:
