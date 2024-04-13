@@ -28,10 +28,10 @@ _LOGGER = logging.getLogger(__name__)
 async def _validate_location(hass: HomeAssistant, location: str) -> str:
     if not any(location.startswith(f"{entity_type}.") for entity_type in VALID_ENTITY_TYPES):
         raise vol.Invalid("location_invalid")
-    location = hass.states.get(location)
-    if location is None:
+    location_check = hass.states.get(location)
+    if location_check is None:
         raise vol.Invalid("location_not_found")
-    return location
+    return location_check.name
 
 
 async def _get_valid_locations(hass: HomeAssistant) -> List[str]:
