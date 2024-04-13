@@ -1,3 +1,4 @@
+from functools import partial
 import logging
 from datetime import timedelta
 from typing import Any, Callable, Dict, Optional
@@ -90,10 +91,13 @@ class CarApiSensor(Entity):
                 self._available = False
                 return
 
-            vehicles = self._api.vehicles_meters_around_location(
-                lat=latitude,
-                lon=longitude,
-                distance_meters=self._distance_meters,
+            vehicles = await self.hass.async_add_executor_job(
+                partial(
+                    self._api.vehicles_meters_around_location,
+                    lat=latitude,
+                    lon=longitude,
+                    distance_meters=self._distance_meters,
+                )
             )
 
             self._state = len(vehicles)
