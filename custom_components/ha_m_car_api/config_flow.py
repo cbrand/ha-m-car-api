@@ -78,9 +78,9 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
             user_input[CONF_DEVICE_KEY] = await validate_device_key(__get_option(CONF_DEVICE_KEY, None))
             user_input[CONF_SCAN_INTERVAL] = __get_option(CONF_SCAN_INTERVAL, DEFAULT_CONF_SCAN_INTERVAL)
 
-            location_entry = ""
+            location = __get_option(CONF_LOCATION, "")
             try:
-                location = await _validate_location(self.hass, location_entry)
+                location = await _validate_location(self.hass, location)
                 items = location.split(".", 1)
                 location_entry = items[-1]
             except vol.Invalid as error:
