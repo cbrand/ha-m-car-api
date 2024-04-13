@@ -57,6 +57,7 @@ class CarApiSensor(Entity):
         self.attrs: dict[str, Any] = {
             "location": self._location,
             "distance_meters": self._distance_meters,
+            "device_key": self._api.device_key,
         }
 
         self._available = True
