@@ -1,0 +1,157 @@
+import logging
+from typing import Any, Dict, List, Optional, Tuple
+from uuid import uuid4
+
+import homeassistant.helpers.config_validation as cv
+import voluptuous as vol
+from homeassistant import config_entries
+from homeassistant.core import HomeAssistant, callback
+from homeassistant.data_entry_flow import FlowResult
+from m_car_api import MApi
+
+from custom_components.ha_m_car_api.const import (
+    CONF_DEVICE_KEY,
+    CONF_SCAN_INTERVAL,
+    CONF_DISTANCE_METERS,
+    CONF_LOCATION,
+    DEFAULT_CONF_SCAN_INTERVAL,
+    DEFAULT_CONF_DISTANCE_METERS,
+    DOMAIN,
+    VALID_ENTITY_TYPES,
+)
+
+M_CAR_API_DATA_SCHEMA = vol.Schema({vol.Required("")})
+
+_LOGGER = logging.getLogger(__name__)
+
+
+async def _validate_location(hass: HomeAssistant, location: str) -> str:
+    if not any(location.startswith(f"{entity_type}.") for entity_type in VALID_ENTITY_TYPES):
+        raise vol.Invalid("location_invalid")
+    location = hass.states.get(location, None)
+    if location is None:
+        raise vol.Invalid("location_not_found")
+    return location
+
+
+async def _get_valid_locations(hass: HomeAssistant) -> List[str]:
+    locations = []
+    for entity_type in VALID_ENTITY_TYPES:
+        locations.extend(hass.states.async_entity_ids(entity_type))
+
+    locations = sorted(locations, key=_location_sort_key)
+    return locations
+
+
+def _location_sort_key(location: str) -> Tuple[str, str]:
+    entity_type, entity_id = location.split(".", 1)
+    return VALID_ENTITY_TYPES.index(entity_type), entity_id
+
+
+class OptionsFlowHandler(config_entries.OptionsFlow):
+
+    def __init__(self, config_entry: config_entries.ConfigEntry) -> None:
+        """Initialize options flow."""
+        self.config_entry = config_entry
+
+    async def async_step_init(self, user_input: dict[str, Any] | None = None) -> FlowResult:
+        """Manage the options."""
+        return await self.async_step_menu(user_input)
+
+    async def async_step_user(self, user_input: dict[str, Any] | None = None) -> FlowResult:
+        """Manage the options."""
+        return await self.async_step_menu(user_input)
+
+    async def async_step_menu(self, user_input: dict[str, Any] | None = None) -> FlowResult:
+        def __get_option(key: str, default: Any) -> Any:
+            result = self.config_entry.options.get(key, self.config_entry.data.get(key, default))
+            return result
+
+        errors = {}
+        if user_input is not None:
+            user_input[CONF_SCAN_INTERVAL] = __get_option(CONF_SCAN_INTERVAL, DEFAULT_CONF_SCAN_INTERVAL)
+
+            location_entry = ""
+            try:
+                location = _validate_location(self.hass, location)
+                items = location.split(".", 1)
+                location_entry = items[-1]
+            except vol.Invalid as error:
+                errors[CONF_LOCATION] = error.error_message
+
+            if len(errors) == 0:
+                return self.async_create_entry(
+                    title=f"M Car API Tracker {location_entry}",
+                    data=user_input,
+                )
+
+        return self.async_show_form(
+            step_id="user",
+            data_schema=vol.Schema(
+                {
+                    vol.Required(CONF_LOCATION, default=__get_option(CONF_LOCATION)): cv.select(
+                        _get_valid_locations(self.hass)
+                    ),
+                    vol.Required(
+                        CONF_DISTANCE_METERS, default=__get_option(CONF_DISTANCE_METERS, DEFAULT_CONF_DISTANCE_METERS)
+                    ): cv.positive_int,
+                    vol.Required(CONF_DEVICE_KEY, default=__get_option(CONF_DEVICE_KEY)): cv.string,
+                    vol.Required(
+                        CONF_SCAN_INTERVAL, default=__get_option(CONF_SCAN_INTERVAL, DEFAULT_CONF_SCAN_INTERVAL)
+                    ): cv.positive_int,
+                }
+            ),
+            errors=errors,
+        )
+
+
+class MCarAPIConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):  # type: ignore[call-arg]
+    VERSION = 1
+    MINOR_VERSION = 1
+
+    async def async_step_user(self, user_input: Optional[Dict[str, Any]] = None) -> FlowResult:
+        errors = {}
+        if user_input is not None:
+            device_key = user_input[CONF_DEVICE_KEY]
+            if not device_key:
+                device_key = str(uuid4())
+            location = user_input[CONF_LOCATION]
+            unique_id = ""
+            location_entry = ""
+            try:
+                location = _validate_location(self.hass, location)
+                items = location.split(".", 1)
+                location_entry = items[-1]
+                unique_id = f"miles_tracker_{items[-1]}"
+            except vol.Invalid as error:
+                errors[CONF_LOCATION] = error.error_message
+
+            if len(errors) == 0:
+                await self.async_set_unique_id(unique_id)
+                self._abort_if_unique_id_configured()
+                _LOGGER.debug("Initialized new new m car api tracker with ID: {unique_id}")
+                return self.async_create_entry(
+                    title=f"M Car API Tracker {location_entry}",
+                    data=user_input,
+                )
+
+        return self.async_show_form(
+            step_id="user",
+            data_schema=vol.Schema(
+                {
+                    vol.Required(CONF_LOCATION): cv.select(_get_valid_locations(self.hass)),
+                    vol.Required(CONF_DISTANCE_METERS, default=DEFAULT_CONF_DISTANCE_METERS): cv.positive_int,
+                    vol.Optional(CONF_DEVICE_KEY): cv.string,
+                    vol.Required(CONF_SCAN_INTERVAL, default=DEFAULT_CONF_SCAN_INTERVAL): cv.positive_int,
+                }
+            ),
+            errors=errors,
+        )
+
+    @staticmethod
+    @callback
+    def async_get_options_flow(
+        config_entry: config_entries.ConfigEntry,
+    ) -> config_entries.OptionsFlow:
+        """Create the options flow."""
+        return OptionsFlowHandler(config_entry)

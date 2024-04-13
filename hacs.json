@@ -1,0 +1,6 @@
+{
+  "name": "M Car API",
+  "render_readme": true,
+  "iot_class": "cloud_polling",
+  "country": ["DE"]
+}

@@ -1,0 +1,40 @@
+{
+  "options": {
+    "flow_title": "Setup Miles Car API {entity_name}",
+    "step": {
+      "user": {
+        "description": "Submit the zone and distance which you want to use.",
+        "data": {
+          "device_key": "Device Key of the Miles Car API, extracted from your phone or automatically generated.",
+          "scan_interval": "The interval in minutes to scan for new data.",
+          "location": "The location used to check for available cars around the location.",
+          "distance_meters": "The distance in meters to search for cars around the location."
+        }
+      }
+    },
+    "error": {
+      "location_invalid": "The location is invalid. Only zones, persons and device_trackers can be used.",
+      "location_not_found": "The location could not be found.",
+      "unknown": "Unknown Error"
+    }
+  },
+  "config": {
+    "flow_title": "Setup Miles Car API {entity_name}",
+    "step": {
+      "user": {
+        "description": "Submit your train station details and calendar entries for the search queries.",
+        "data": {
+          "device_key": "Device Key of the Miles Car API, extracted from your phone or automatically generated.",
+          "scan_interval": "The interval in minutes to scan for new data.",
+          "location": "The location used to check for available cars around the location.",
+          "distance_meters": "The distance in meters to search for cars around the location."
+        }
+      }
+    },
+    "error": {
+      "location_invalid": "The location is invalid. Only zones, persons and device_trackers can be used.",
+      "location_not_found": "The location could not be found.",
+      "unknown": "Unknown Error"
+    }
+  }
+}

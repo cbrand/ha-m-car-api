@@ -1,0 +1,11 @@
+{
+  "codeowners": ["@cbrand"],
+  "config_flow": true,
+  "dependencies": [],
+  "documentation": "https://github.com/cbrand/ha_m_car_api",
+  "domain": "ha_m_car_api",
+  "iot_class": "cloud_polling",
+  "name": "M Car API",
+  "requirements": ["m-car-api>=1.0.2"],
+  "version": "1.0.0"
+}
