@@ -114,10 +114,10 @@ class MCarAPIConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):  # type: igno
     async def async_step_user(self, user_input: Optional[Dict[str, Any]] = None) -> FlowResult:
         errors = {}
         if user_input is not None:
-            device_key = user_input[CONF_DEVICE_KEY]
+            device_key = user_input.get(CONF_DEVICE_KEY, None)
             if not device_key:
                 device_key = str(uuid4())
-            location = user_input[CONF_LOCATION]
+            location = user_input.get(CONF_LOCATION, "")
             unique_id = ""
             location_entry = ""
             try:
