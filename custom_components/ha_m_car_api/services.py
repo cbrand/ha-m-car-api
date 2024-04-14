@@ -1,3 +1,4 @@
+from functools import partial
 from typing import Awaitable, Callable
 from uuid import uuid4
 
@@ -50,12 +51,15 @@ def search_vehicles_service(hass: HomeAssistant) -> Callable[[ServiceCall], Awai
                 vehicle_size_filter=type_limit,
             )
 
-        vehicles = vehicles_meters_around_location(
-            device_key=device_key,
-            lat=latitude,
-            lon=longitude,
-            meters=distance_meters,
-            query=query,
+        vehicles = await hass.async_add_executor_job(
+            partial(
+                vehicles_meters_around_location,
+                device_key=device_key,
+                lat=latitude,
+                lon=longitude,
+                meters=distance_meters,
+                query=query,
+            )
         )
 
         gas_only = call.data.get(CONF_GAS_ONLY, False)
