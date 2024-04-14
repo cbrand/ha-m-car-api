@@ -1,8 +1,7 @@
-from functools import partial
 import logging
 from datetime import timedelta
+from functools import partial
 from typing import Any, Callable, Dict, Optional
-from uuid import uuid4
 
 import requests
 from homeassistant.core import HomeAssistant
@@ -14,17 +13,18 @@ from m_car_api.api import VehicleQuery
 from custom_components.ha_m_car_api.const import (
     CONF_DEVICE_KEY,
     CONF_DISTANCE_METERS,
+    CONF_ELECTRIC_ONLY,
     CONF_GAS_ONLY,
     CONF_LOCATION,
-    CONF_TYPE_LIMIT,
-    CONF_ELECTRIC_ONLY,
     CONF_SCAN_INTERVAL,
-    DEFAULT_CONF_ELECTRIC_ONLY,
+    CONF_TYPE_LIMIT,
     DEFAULT_CONF_DISTANCE_METERS,
+    DEFAULT_CONF_ELECTRIC_ONLY,
     DEFAULT_CONF_GAS_ONLY,
     DEFAULT_CONF_SCAN_INTERVAL,
     DOMAIN,
 )
+from custom_components.ha_m_car_api.response import format_attrs
 
 _LOGGER = logging.getLogger(__name__)
 SCAN_INTERVAL = timedelta(minutes=DEFAULT_CONF_SCAN_INTERVAL)
@@ -67,6 +67,8 @@ class CarApiSensor(Entity):
         self._scan_interval = data.get(CONF_SCAN_INTERVAL, DEFAULT_CONF_SCAN_INTERVAL)
         self._type_limit = data.get(CONF_TYPE_LIMIT, None)
         self._type_limit = sorted(self._type_limit) if self._type_limit else None
+        self._electric_only = self.attrs["electric_only"] = data.get(CONF_ELECTRIC_ONLY, DEFAULT_CONF_ELECTRIC_ONLY)
+        self._gas_only = self.attrs["gas_only"] = data.get(CONF_GAS_ONLY, DEFAULT_CONF_GAS_ONLY)
 
         default_name = f"Miles cars close to {self._location}"
         if self._type_limit:
@@ -85,9 +87,6 @@ class CarApiSensor(Entity):
 
         if self._type_limit:
             self.attrs["type_limit"] = self._type_limit
-
-        self._electric_only = self.attrs["electric_only"] = data.get(CONF_ELECTRIC_ONLY, DEFAULT_CONF_ELECTRIC_ONLY)
-        self._gas_only = self.attrs["gas_only"] = data.get(CONF_GAS_ONLY, DEFAULT_CONF_GAS_ONLY)
 
         self._available = True
 
@@ -116,7 +115,7 @@ class CarApiSensor(Entity):
         return self._available
 
     @property
-    def state(self) -> Optional[str]:
+    def state(self) -> Optional[int]:
         return self._state
 
     @property
@@ -167,39 +166,7 @@ class CarApiSensor(Entity):
                 vehicles = [vehicle for vehicle in vehicles if not vehicle.electric]
 
             self._state = len(vehicles)
-            self.attrs["num_electric_cars"] = len([vehicle for vehicle in vehicles if vehicle.electric])
-            self.attrs["num_gas_cars"] = len([vehicle for vehicle in vehicles if not vehicle.electric])
-            self.attrs.update(
-                {
-                    "number_car_s": 0,
-                    "number_car_s_electric": 0,
-                    "number_car_s_gas": 0,
-                    "number_car_m": 0,
-                    "number_car_m_electric": 0,
-                    "number_car_m_gas": 0,
-                    "number_car_l": 0,
-                    "number_car_l_electric": 0,
-                    "number_car_l_gas": 0,
-                    "number_car_x": 0,
-                    "number_car_x_electric": 0,
-                    "number_car_x_gas": 0,
-                    "number_car_p": 0,
-                    "number_car_p_electric": 0,
-                    "number_car_p_gas": 0,
-                }
-            )
-
-            for vehicle in vehicles:
-                car_key = f"number_car_{vehicle.size.lower()}"
-                self.attrs[car_key] += 1
-                if vehicle.electric:
-                    car_key += "_electric"
-                    self.attrs[car_key] += 1
-                else:
-                    car_key += "_gas"
-                    self.attrs[car_key] += 1
-
-            self.attrs["vehicles"] = [vehicle.dict() for vehicle in vehicles]
+            self.attrs.update(format_attrs(vehicles))
 
         except (ValueError, requests.ConnectionError):
             self._available = False

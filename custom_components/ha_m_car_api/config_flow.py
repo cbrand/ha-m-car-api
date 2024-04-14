@@ -11,16 +11,16 @@ from homeassistant.helpers.selector import SelectSelector, SelectSelectorConfig,
 
 from custom_components.ha_m_car_api.const import (
     CONF_DEVICE_KEY,
+    CONF_DISTANCE_METERS,
     CONF_ELECTRIC_ONLY,
     CONF_GAS_ONLY,
-    CONF_SCAN_INTERVAL,
-    CONF_DISTANCE_METERS,
     CONF_LOCATION,
+    CONF_SCAN_INTERVAL,
     CONF_TYPE_LIMIT,
+    DEFAULT_CONF_DISTANCE_METERS,
     DEFAULT_CONF_ELECTRIC_ONLY,
     DEFAULT_CONF_GAS_ONLY,
     DEFAULT_CONF_SCAN_INTERVAL,
-    DEFAULT_CONF_DISTANCE_METERS,
     DEFAULT_CONF_TYPE_LIMIT,
     DOMAIN,
     VALID_CAR_TYPES,
@@ -56,7 +56,7 @@ async def _get_valid_locations(hass: HomeAssistant) -> List[str]:
     return locations
 
 
-def _location_sort_key(location: str) -> Tuple[str, str]:
+def _location_sort_key(location: str) -> Tuple[int, str]:
     entity_type, entity_id = location.split(".", 1)
     return VALID_ENTITY_TYPES.index(entity_type), entity_id
 

@@ -1,9 +1,11 @@
 import asyncio
+from datetime import timedelta
 from typing import Any
 
 from homeassistant import config_entries, core
-from datetime import timedelta
+
 from custom_components.ha_m_car_api.config_flow import DOMAIN
+from custom_components.ha_m_car_api.services import search_vehicles_service
 
 CONF_SCAN_INTERVAL = 2
 SCAN_INTERVAL = timedelta(minutes=2)
@@ -11,6 +13,8 @@ SCAN_INTERVAL = timedelta(minutes=2)
 
 async def async_setup(hass: core.HomeAssistant, config: dict) -> bool:
     """Set up the M Car API component."""
+    hass.services.register(DOMAIN, "search_vehicles", search_vehicles_service(hass))
+
     return True
 
 

@@ -1,0 +1,22 @@
+
+search_vehicles:
+  description: Search for miles vehicles around a home assistant location or a given lat, lon coordinate
+  fields:
+    location:
+      description: Name of the location in home assistant with a lat, lon entry
+    latitude: 
+      description: Latitude of the location
+      example: 51.5074
+    longitude:
+      description: Longitude of the location
+      example: 0.1278
+    search: 
+      description: Search string
+      example: "ABC"
+    limit: 
+      description: Limit the number of results
+      example: 10
+    offset: 
+      description: Offset the results
+      example: 0
+  

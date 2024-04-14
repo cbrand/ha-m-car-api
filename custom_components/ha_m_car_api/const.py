@@ -6,6 +6,8 @@ CONF_DISTANCE_METERS = "distance_meters"
 CONF_TYPE_LIMIT = "type_limit"
 CONF_ELECTRIC_ONLY = "electric_only"
 CONF_GAS_ONLY = "gas_only"
+CONF_LATITUDE = "latitude"
+CONF_LONGITUDE = "longitude"
 
 VALID_ENTITY_TYPES = ["zone", "person", "device_tracker"]
 VALID_CAR_TYPES = ["S", "M", "L", "X", "P"]
