@@ -71,6 +71,10 @@ class CarApiSensor(Entity):
         default_name = f"Miles cars close to {self._location}"
         if self._type_limit:
             default_name = f"{', '.join(self._type_limit)} {default_name}"
+        if self._electric_only:
+            default_name += " (electric only)"
+        elif self._gas_only:
+            default_name += " (gas only)"
         self._name = data.get("name", default_name)
         self._attr_icon = data.get("icon", "mdi:car-search")
         self.attrs: dict[str, Any] = {
