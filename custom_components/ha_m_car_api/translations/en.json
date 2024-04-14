@@ -8,7 +8,10 @@
           "device_key": "Device Key of the Miles Car API, extracted from your phone or automatically generated.",
           "scan_interval": "The interval in minutes to scan for new data.",
           "location": "The location used to check for available cars around the location.",
-          "distance_meters": "The distance in meters to search for cars around the location."
+          "distance_meters": "The distance in meters to search for cars around the location.",
+          "type_limit": "The types of cars which should be returned.",
+          "electric_only": "Filter to only return electric cars.",
+          "gas_only": "Filter to only return cars which are not electric."
         }
       },
       "user": {
@@ -17,7 +20,10 @@
           "device_key": "Device Key of the Miles Car API, extracted from your phone or automatically generated.",
           "scan_interval": "The interval in minutes to scan for new data.",
           "location": "The location used to check for available cars around the location.",
-          "distance_meters": "The distance in meters to search for cars around the location."
+          "distance_meters": "The distance in meters to search for cars around the location.",
+          "type_limit": "The types of cars which should be returned.",
+          "electric_only": "Filter to only return electric cars.",
+          "gas_only": "Filter to only return cars which are not electric."
         }
       }
     },
@@ -36,7 +42,10 @@
           "device_key": "Device Key of the Miles Car API, extracted from your phone or automatically generated.",
           "scan_interval": "The interval in minutes to scan for new data.",
           "location": "The location used to check for available cars around the location.",
-          "distance_meters": "The distance in meters to search for cars around the location."
+          "distance_meters": "The distance in meters to search for cars around the location.",
+          "type_limit": "The types of cars which should be returned.",
+          "electric_only": "Filter to only return electric cars.",
+          "gas_only": "Filter to only return cars which are not electric."
         }
       }
     },
