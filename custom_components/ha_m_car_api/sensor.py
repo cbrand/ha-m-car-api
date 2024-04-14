@@ -67,8 +67,8 @@ class CarApiSensor(Entity):
         self._scan_interval = data.get(CONF_SCAN_INTERVAL, DEFAULT_CONF_SCAN_INTERVAL)
         self._type_limit = data.get(CONF_TYPE_LIMIT, None)
         self._type_limit = sorted(self._type_limit) if self._type_limit else None
-        self._electric_only = self.attrs["electric_only"] = data.get(CONF_ELECTRIC_ONLY, DEFAULT_CONF_ELECTRIC_ONLY)
-        self._gas_only = self.attrs["gas_only"] = data.get(CONF_GAS_ONLY, DEFAULT_CONF_GAS_ONLY)
+        self._electric_only = bool(data.get(CONF_ELECTRIC_ONLY, DEFAULT_CONF_ELECTRIC_ONLY))
+        self._gas_only = bool(data.get(CONF_GAS_ONLY, DEFAULT_CONF_GAS_ONLY))
 
         default_name = f"Miles cars close to {self._location}"
         if self._type_limit:
@@ -83,6 +83,8 @@ class CarApiSensor(Entity):
             "location": self._location,
             "distance_meters": self._distance_meters,
             "device_key": self._api.device_key,
+            "electric_only": self._electric_only,
+            "gas_only": self._gas_only,
         }
 
         if self._type_limit:

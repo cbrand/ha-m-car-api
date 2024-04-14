@@ -13,7 +13,9 @@ SCAN_INTERVAL = timedelta(minutes=2)
 
 async def async_setup(hass: core.HomeAssistant, config: dict) -> bool:
     """Set up the M Car API component."""
-    hass.services.register(DOMAIN, "search_vehicles", search_vehicles_service(hass))
+    hass.services.async_register(
+        DOMAIN, "search_vehicles", search_vehicles_service(hass), supports_response=core.SupportsResponse.ONLY
+    )
 
     return True
 
