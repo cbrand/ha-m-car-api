@@ -10,10 +10,17 @@ search_vehicles:
     longitude:
       description: Longitude of the location
       example: 0.1278
-    limit: 
-      description: Limit the number of results
-      example: 10
-    offset: 
-      description: Offset the results
-      example: 0
+    distance_meters:
+      description: Radius in meters to search for vehicles
+      example: 1000
+    type_limit:
+      description: Limit the search to a specific vehicle type
+      example: ["S", "M", "L", "P"]
+    gas_only:
+      description: Only return vehicles with gas engines
+      example: true
+    electric_only:
+      description: Only return vehicles with electric engines
+      example: true
+
   
