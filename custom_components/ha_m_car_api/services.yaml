@@ -10,9 +10,6 @@ search_vehicles:
     longitude:
       description: Longitude of the location
       example: 0.1278
-    search: 
-      description: Search string
-      example: "ABC"
     limit: 
       description: Limit the number of results
       example: 10
