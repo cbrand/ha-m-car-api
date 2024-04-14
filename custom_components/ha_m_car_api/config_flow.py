@@ -115,13 +115,6 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                     vol.Required(
                         CONF_SCAN_INTERVAL, default=__get_option(CONF_SCAN_INTERVAL, DEFAULT_CONF_SCAN_INTERVAL)
                     ): cv.positive_int,
-                    vol.Required(
-                        CONF_TYPE_LIMIT, default=__get_option(CONF_TYPE_LIMIT, DEFAULT_CONF_TYPE_LIMIT)
-                    ): cv.multi_select(VALID_CAR_TYPES),
-                    vol.Required(
-                        CONF_ELECTRIC_ONLY, default=__get_option(CONF_ELECTRIC_ONLY, DEFAULT_CONF_ELECTRIC_ONLY)
-                    ): cv.boolean,
-                    vol.Required(CONF_GAS_ONLY, default=__get_option(CONF_GAS_ONLY, DEFAULT_CONF_GAS_ONLY)): cv.boolean,
                 }
             ),
             errors=errors,

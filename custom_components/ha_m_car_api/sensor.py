@@ -99,6 +99,10 @@ class CarApiSensor(Entity):
         id = f"miles_cars_close_to_{location_key}_{location_entity}"
         if self._type_limit:
             id += f"_{'_'.join(self._type_limit)}"
+        if self._gas_only:
+            id += "_gas"
+        elif self._electric_only:
+            id += "_electric"
 
         return id
 
