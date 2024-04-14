@@ -61,6 +61,19 @@ def _location_sort_key(location: str) -> Tuple[str, str]:
     return VALID_ENTITY_TYPES.index(entity_type), entity_id
 
 
+def get_title_of(location_entry: str, data: dict[str, Any]) -> str:
+    title = f"M Car API Tracker {location_entry}"
+    type_limit = data[CONF_TYPE_LIMIT]
+    if type_limit:
+        title += f" ({', '.join(type_limit)})"
+    if data[CONF_ELECTRIC_ONLY]:
+        title += " (Electric)"
+    elif data[CONF_GAS_ONLY]:
+        title += " (Gas)"
+
+    return title
+
+
 class OptionsFlowHandler(config_entries.OptionsFlow):
 
     def __init__(self, config_entry: config_entries.ConfigEntry) -> None:
@@ -95,7 +108,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
 
             if len(errors) == 0:
                 return self.async_create_entry(
-                    title=f"M Car API Tracker {location_entry}",
+                    title=get_title_of(location_entry, user_input),
                     data=user_input,
                 )
 
@@ -145,7 +158,7 @@ class MCarAPIConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):  # type: igno
                 self._abort_if_unique_id_configured()
                 _LOGGER.debug("Initialized new new m car api tracker with ID: {unique_id}")
                 return self.async_create_entry(
-                    title=f"M Car API Tracker {location_entry}",
+                    title=get_title_of(location_entry, user_input),
                     data=user_input,
                 )
 
