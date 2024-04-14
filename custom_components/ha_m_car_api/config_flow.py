@@ -61,6 +61,20 @@ def _location_sort_key(location: str) -> Tuple[str, str]:
     return VALID_ENTITY_TYPES.index(entity_type), entity_id
 
 
+def get_unique_id(location: str, data: dict[str, Any]) -> str:
+    location = location.replace(".", "_")
+
+    unique_id = f"miles_tracker_{location}"
+    if type_limit := data.get(CONF_TYPE_LIMIT, DEFAULT_CONF_TYPE_LIMIT):
+        unique_id += f"_{'_'.join(sorted(type_limit))}"
+
+    if data.get(CONF_ELECTRIC_ONLY, DEFAULT_CONF_ELECTRIC_ONLY):
+        unique_id += "_electric"
+    elif data.get(CONF_GAS_ONLY, DEFAULT_CONF_GAS_ONLY):
+        unique_id += "_gas"
+    return unique_id
+
+
 def get_title_of(location_entry: str, data: dict[str, Any]) -> str:
     title = f"M Car API Tracker {location_entry}"
     type_limit = data[CONF_TYPE_LIMIT]
@@ -149,7 +163,7 @@ class MCarAPIConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):  # type: igno
                 location = await _validate_location(self.hass, location)
                 items = location.split(".", 1)
                 location_entry = items[-1]
-                unique_id = f"miles_tracker_{items[-1]}"
+                unique_id = get_unique_id(location, user_input)
             except vol.Invalid as error:
                 errors[CONF_LOCATION] = error.error_message
 
