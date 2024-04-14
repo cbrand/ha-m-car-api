@@ -133,9 +133,10 @@ class CarApiSensor(Entity):
         query: VehicleQuery | None = None
 
         if self._type_limit:
-            if query is None:
-                query = VehicleQuery()
-            query.vehicle_size_filter = tuple(self._type_limit)
+            query = VehicleQuery(
+                vehicle_size_filter=tuple(self._type_limit),
+            )
+            search_parameters["query"] = query
 
         return search_parameters
 
